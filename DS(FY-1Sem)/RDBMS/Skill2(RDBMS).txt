@@ -1,0 +1,100 @@
+create database skill2;
+use skill2;
+																-- RAILWAY RESERVATION --
+                                                                
+CREATE TABLE USER (user_id INT PRIMARY KEY, name VARCHAR(100) NOT NULL, address TEXT NOT NULL);
+
+CREATE TABLE CONTACT (contact_no INT PRIMARY KEY, user_id INT, FOREIGN KEY (user_id) REFERENCES USER (user_id));
+
+CREATE TABLE TRAIN (train_id INT PRIMARY KEY, train_name VARCHAR (100) NOT NULL, type VARCHAR(100) NOT NULL, source VARCHAR (100) NOT NULL, destination VARCHAR (100) NOT NULL, 
+arrival_time DATETIME, departure_time DATETIME, user_id INT, FOREIGN KEY (user_id) REFERENCES USER (user_id));
+
+CREATE TABLE TRAIN_USER (user_id INT, train_id INT, FOREIGN KEY (user_id) REFERENCES USER (user_id), FOREIGN KEY (train_id) REFERENCES Train (train_id));
+
+CREATE TABLE Ticket(ticket_id INT PRIMARY KEY, coach VARCHAR(100) UNIQUE, ticket_date DATETIME NOT NULL, amount DECIMAL(10, 2) NOT NULL, no_of_passgnr INT NOT NULL,
+user_id INT, FOREIGN KEY (user_id) REFERENCES USER (user_id));
+
+CREATE TABLE Payment(pay_id INT PRIMARY KEY, amount DECIMAL(10, 2) NOT NULL, Time_stamp DATETIME NOT NULL, user_id INT, FOREIGN KEY (user_id) REFERENCES USER (user_id));
+
+CREATE TABLE UPI(upi_id INT PRIMARY KEY, pay_id INT, FOREIGN KEY (pay_id) REFERENCES Payment (pay_id));
+
+CREATE TABLE Card(card_no INT PRIMARY KEY, holder_name VARCHAR(100) NOT NULL, card_expiry DATE NOT NULL, card_type VARCHAR(20) NOT NULL, 
+pay_id INT, FOREIGN KEY (pay_id) REFERENCES Payment (pay_id));
+
+
+INSERT INTO User (user_id, name, address) 
+VALUES (101, 'Shyam', '29 STREET DELTA VILLA'), (102, 'Shreya', '456 COLONY Oak Avenue');
+
+INSERT INTO Train (train_id, train_name, type, source, destination, arrival_time, departure_time)
+VALUES (12127, 'Pune Intercity', 'Super Fast Express', 'Mumbai', 'Pune', '2024-09-13 06:40:00', '2024-09-13 09:57:00');
+
+										-- MOVIE DATABASE -  --
+
+CREATE TABLE ProductionCompany (CompanyName VARCHAR(50) PRIMARY KEY, Address VARCHAR(50));
+
+CREATE TABLE Movie (Title VARCHAR(50), Year INT, LengthMinutes INT, PlotOutline VARCHAR(50),
+ProductionCompanyName VARCHAR(50),PRIMARY KEY (Title, Year),FOREIGN KEY (ProductionCompanyName)
+REFERENCES ProductionCompany(CompanyName));
+
+CREATE TABLE Actor (Name VARCHAR( 50) PRIMARY KEY, DateOfBirth DATE);
+
+CREATE TABLE Director (Name VARCHAR(50) PRIMARY KEY, DateOfBirth DATE);
+
+CREATE TABLE MovieActor (Title VARCHAR(50), Year INT, ActorName VARCHAR(50), Role VARCHAR(50),
+PRIMARY KEY (Title, Year, ActorName),FOREIGN KEY (Title, Year) REFERENCES Movie(Title, Year), FOREIGN KEY
+(ActorName) REFERENCES Actor(Name));
+
+CREATE TABLE MovieDirector (Title VARCHAR(50),Year INT,DirectorName VARCHAR(50),PRIMARY KEY (Title , Year , DirectorName),FOREIGN KEY (Title , Year)REFERENCES Movie (Title , Year),FOREIGN KEY (DirectorName)REFERENCES Director (Name));
+
+										-- CONFERENCE DATABASE --
+
+CREATE TABLE AUTHOR (
+    email_id VARCHAR(50) PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50)
+);
+
+CREATE TABLE PAPERS (
+    paper_id INT PRIMARY KEY,
+    Title VARCHAR(50),
+    abstract TEXT,
+    file_name VARCHAR(50),
+    email_id VARCHAR(50),
+    FOREIGN KEY (email_id) REFERENCES AUTHOR(email_id)
+);
+
+CREATE TABLE AUTHORS_WRITE_PAPERS (
+    email_id VARCHAR(50),
+    paper_id INT,
+    FOREIGN KEY (email_id) REFERENCES AUTHOR(email_id),
+    FOREIGN KEY (paper_id) REFERENCES PAPERS(paper_id)
+);
+
+CREATE TABLE REVIEWS (
+    review_id INT PRIMARY KEY,
+    recommendation VARCHAR(50),
+    committee_comments TEXT,
+    author_comments TEXT,
+    technical_merit INT CHECK (technical_merit BETWEEN 1 AND 10),
+    readability INT CHECK (readability BETWEEN 1 AND 10),
+    originality INT CHECK (originality BETWEEN 1 AND 10),
+    relevance INT CHECK (relevance BETWEEN 1 AND 10),
+    paper_id INT,
+    FOREIGN KEY (paper_id) REFERENCES PAPERS(paper_id)
+);
+
+CREATE TABLE REVIEWERS (
+    email_id VARCHAR(50) PRIMARY KEY,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    affiliation VARCHAR(50),
+    topics TEXT,
+    review_id INT,
+    FOREIGN KEY (review_id) REFERENCES REVIEWS(review_id)
+);
+
+CREATE TABLE CONTACT1 (
+    contact_no INT PRIMARY KEY,
+    email_id VARCHAR(50),
+    FOREIGN KEY (email_id) REFERENCES REVIEWERS(email_id)
+);
